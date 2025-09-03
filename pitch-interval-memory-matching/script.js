@@ -31,6 +31,22 @@ const GRID_SIZES = {
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let timerInterval, startTime;
 
+function setBoardSize(cols, rows){
+    const gap = 10; // match CSS gap
+    const header = document.querySelector('h1').offsetHeight;
+    const controls = document.getElementById('controls').offsetHeight;
+    const timer = document.getElementById('timer').offsetHeight;
+    const availableWidth = window.innerWidth - 20; // small margin
+    const availableHeight = window.innerHeight - header - controls - timer - 20;
+    const tileSize = Math.min(
+        (availableWidth - gap * (cols - 1)) / cols,
+        (availableHeight - gap * (rows - 1)) / rows
+    );
+    const board = document.getElementById('game');
+    board.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
+    board.style.gridAutoRows = `${tileSize}px`;
+}
+
 function midiToFreq(m){
     return 440 * Math.pow(2, (m-69)/12);
 }
@@ -108,8 +124,8 @@ function generateTiles(diff){
 function buildBoard(diff){
     const board = document.getElementById('game');
     board.innerHTML='';
-    const {tiles, cols} = generateTiles(diff);
-    board.style.gridTemplateColumns = `repeat(${cols}, 80px)`;
+    const {tiles, cols, rows} = generateTiles(diff);
+    setBoardSize(cols, rows);
     tiles.forEach((t,i)=>{
         const div = document.createElement('div');
         div.className = 'tile';
@@ -147,7 +163,8 @@ function initGame(){
     if(practice){
         const intervals = INTERVAL_SETS[diff];
         const cols = Math.ceil(Math.sqrt(intervals.length));
-        board.style.gridTemplateColumns = `repeat(${cols}, 80px)`;
+        const rows = Math.ceil(intervals.length/cols);
+        setBoardSize(cols, rows);
         intervals.forEach(interval => {
             const div = document.createElement('div');
             div.className = 'tile revealed';
@@ -213,6 +230,24 @@ function initGame(){
         });
         if(timed) startTimer();
     }
+    adjustBoard();
 }
 
 document.getElementById('start').addEventListener('click', initGame);
+
+function adjustBoard(){
+    const board = document.getElementById('game');
+    if(board.classList.contains('hidden')) return;
+    const diff = document.getElementById('difficulty').value;
+    let cols, rows;
+    if(document.getElementById('practice-toggle').checked){
+        const intervals = INTERVAL_SETS[diff];
+        cols = Math.ceil(Math.sqrt(intervals.length));
+        rows = Math.ceil(intervals.length/cols);
+    } else {
+        [cols, rows] = GRID_SIZES[diff];
+    }
+    setBoardSize(cols, rows);
+}
+
+window.addEventListener('resize', adjustBoard);
