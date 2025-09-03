@@ -33,16 +33,13 @@ let timerInterval, startTime;
 
 function setBoardSize(cols, rows){
     const gap = 10; // match CSS gap
-    const header = document.querySelector('h1').offsetHeight;
-    const controls = document.getElementById('controls').offsetHeight;
-    const timer = document.getElementById('timer').offsetHeight;
-    const availableWidth = window.innerWidth - 20; // small margin
-    const availableHeight = window.innerHeight - header - controls - timer - 20;
+    const board = document.getElementById('game');
+    const availableWidth = board.clientWidth;
+    const availableHeight = board.clientHeight;
     const tileSize = Math.min(
         (availableWidth - gap * (cols - 1)) / cols,
         (availableHeight - gap * (rows - 1)) / rows
     );
-    const board = document.getElementById('game');
     board.style.gridTemplateColumns = `repeat(${cols}, ${tileSize}px)`;
     board.style.gridAutoRows = `${tileSize}px`;
 }
@@ -124,8 +121,7 @@ function generateTiles(diff){
 function buildBoard(diff){
     const board = document.getElementById('game');
     board.innerHTML='';
-    const {tiles, cols, rows} = generateTiles(diff);
-    setBoardSize(cols, rows);
+    const {tiles} = generateTiles(diff);
     tiles.forEach((t,i)=>{
         const div = document.createElement('div');
         div.className = 'tile';
@@ -164,7 +160,6 @@ function initGame(){
         const intervals = INTERVAL_SETS[diff];
         const cols = Math.ceil(Math.sqrt(intervals.length));
         const rows = Math.ceil(intervals.length/cols);
-        setBoardSize(cols, rows);
         intervals.forEach(interval => {
             const div = document.createElement('div');
             div.className = 'tile revealed';
