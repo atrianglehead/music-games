@@ -8,12 +8,7 @@
 <body>
     <h1>Pitch Interval Memory Matching</h1>
     <div id="controls">
-        <label>Mode:
-            <select id="mode">
-                <option value="game">Memory Game</option>
-                <option value="practice">Practice Mode</option>
-            </select>
-        </label>
+        <label><input type="checkbox" id="practice-toggle"> Practice Mode</label>
         <label>Difficulty:
             <select id="difficulty">
                 <option value="easy">Easy</option>
@@ -34,10 +29,6 @@
     </div>
     <div id="timer" class="hidden">Time: <span id="time">0.0</span>s</div>
     <div id="game" class="hidden"></div>
-    <div id="practice" class="hidden">
-        <button id="play-random">Play Random Interval</button>
-        <div id="practice-log"></div>
-    </div>
     <script src="script.js"></script>
 </body>
 </html>
