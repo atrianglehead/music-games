@@ -14,13 +14,22 @@ body {
     align-items: center;
     gap: 10px;
     text-align: center;
+    overflow: hidden;
 }
 
 #options {
     display: flex;
     justify-content: center;
+    align-items: stretch;
     flex-wrap: wrap;
     gap: 10px;
+    width: 80%;
+    height: 80%;
+}
+
+#options > * {
+    flex: 1 1 30%;
+    max-width: 100%;
 }
 
 #timer {
