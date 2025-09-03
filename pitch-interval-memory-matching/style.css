@@ -9,4 +9,3 @@ body {font-family: Arial, sans-serif; padding: 20px;}
 .tile.matched {background: #8f8;}
 .tile.wrong {background: #f88;}
 .hidden {display: none;}
-#practice-log {margin-top: 10px;}

@@ -5,6 +5,22 @@ const INTERVAL_SETS = {
     expert: Array.from({length:12},(_,i)=>i)
 };
 
+const INTERVAL_NAMES = {
+    0: 'Unison',
+    1: 'm2',
+    2: 'M2',
+    3: 'm3',
+    4: 'M3',
+    5: 'P4',
+    6: 'Tritone',
+    7: 'P5',
+    8: 'm6',
+    9: 'M6',
+    10: 'm7',
+    11: 'M7',
+    12: 'Octave'
+};
+
 const GRID_SIZES = {
     easy: [2,2],
     medium: [3,2],
@@ -119,41 +135,50 @@ function stopTimer(){
 }
 
 function initGame(){
-    const mode = document.getElementById('mode').value;
+    const practice = document.getElementById('practice-toggle').checked;
     const diff = document.getElementById('difficulty').value;
     const playback = document.getElementById('playback').value;
     const timed = document.getElementById('timed').checked;
-    document.getElementById('practice').classList.add('hidden');
-    document.getElementById('game').classList.add('hidden');
+    const board = document.getElementById('game');
+    board.innerHTML='';
+    board.classList.add('hidden');
     document.getElementById('timer').classList.add('hidden');
 
-    if(mode === 'practice'){
-        document.getElementById('practice').classList.remove('hidden');
-        const log = document.getElementById('practice-log');
-        log.innerHTML='';
-        let count = 0;
-        document.getElementById('play-random').onclick = ()=>{
-            const set = INTERVAL_SETS[diff];
-            const interval = set[Math.floor(Math.random()*set.length)];
-            playInterval(randomRoot(), interval, playback);
-            count++;
-            const entry = document.createElement('div');
-            entry.textContent = `Interval #${count}`;
-            log.appendChild(entry);
-        };
+    if(practice){
+        const intervals = INTERVAL_SETS[diff];
+        const cols = Math.ceil(Math.sqrt(intervals.length));
+        board.style.gridTemplateColumns = `repeat(${cols}, 80px)`;
+        intervals.forEach(interval => {
+            const div = document.createElement('div');
+            div.className = 'tile revealed';
+            div.dataset.interval = interval;
+            div.dataset.root = randomRoot();
+            div.textContent = INTERVAL_NAMES[interval];
+            board.appendChild(div);
+            div.addEventListener('click', ()=>{
+                playInterval(parseInt(div.dataset.root), parseInt(div.dataset.interval), playback);
+            });
+        });
+        board.classList.remove('hidden');
     } else {
         buildBoard(diff);
-        document.getElementById('game').classList.remove('hidden');
+        board.classList.remove('hidden');
         const tiles = Array.from(document.querySelectorAll('.tile'));
         let first=null, lock=false, matches=0;
         const totalPairs = tiles.length/2;
 
         tiles.forEach(tile=>{
             tile.addEventListener('click', ()=>{
-                if(lock || tile.classList.contains('revealed') || tile.classList.contains('matched')) return;
+                const root = parseInt(tile.dataset.root);
+                const interval = parseInt(tile.dataset.interval);
+                if(tile.classList.contains('revealed') || tile.classList.contains('matched')){
+                    playInterval(root, interval, playback);
+                    return;
+                }
+                if(lock) return;
+                playInterval(root, interval, playback);
                 tile.classList.add('revealed');
                 tile.textContent='';
-                playInterval(parseInt(tile.dataset.root), parseInt(tile.dataset.interval), playback);
                 if(!first){
                     first=tile;
                 } else {
