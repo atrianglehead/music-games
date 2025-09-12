@@ -1,35 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Pitch Interval Memory Matching</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pitch-Interval Memory Match</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div id="controls">
-        <div id="options">
-            <label><input type="checkbox" id="practice-toggle"> Practice Mode</label>
-            <label>Difficulty:
-                <select id="difficulty">
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                    <option value="expert">Expert</option>
-                </select>
-            </label>
-            <label>Playback:
-                <select id="playback">
-                    <option value="harmonic">Harmonic</option>
-                    <option value="melodic-asc">Melodic Asc</option>
-                    <option value="melodic-desc">Melodic Desc</option>
-                </select>
-            </label>
-            <label><input type="checkbox" id="timed"> Timed Run</label>
-            <button id="start">Start</button>
-        </div>
-        <div id="timer" class="hidden">Time: <span id="time">0.0</span>s</div>
+<body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
+
+<div class="max-w-3xl mx-auto p-4 sm:p-6 md:p-8">
+  <header class="mb-6">
+    <h1 class="text-2xl font-semibold">Pitch-Interval Memory Match</h1>
+    <p class="text-neutral-400">Match pairs by <em>ear</em>. Click two tiles; if they’re the same interval, they stay revealed.</p>
+  </header>
+
+  <section class="grid gap-4 mb-4 md:grid-cols-3">
+    <div class="bg-neutral-900 rounded-xl p-4 space-y-2">
+      <div class="text-sm text-neutral-400">Playback</div>
+      <select id="mode" class="w-full bg-neutral-800 rounded-lg px-3 py-2">
+        <option value="mel_up">Melodic ↑ (root → interval)</option>
+        <option value="mel_down">Melodic ↓ (interval → root)</option>
+        <option value="harm">Harmonic (both together)</option>
+      </select>
+      <div class="text-xs text-neutral-500">Tip: switch modes between rounds to train different skills.</div>
     </div>
-    <div id="game" class="hidden"></div>
-    <script src="script.js"></script>
+
+    <div class="bg-neutral-900 rounded-xl p-4 space-y-2">
+      <div class="text-sm text-neutral-400">Pairs</div>
+      <input id="pairs" type="range" min="4" max="10" step="1" value="8" class="w-full">
+      <div><span id="pairsVal" class="tabular-nums">8</span> pairs (16 tiles)</div>
+    </div>
+
+    <div class="bg-neutral-900 rounded-xl p-4 space-y-2">
+      <div class="text-sm text-neutral-400">Interval Set</div>
+      <select id="intervalSet" class="w-full bg-neutral-800 rounded-lg px-3 py-2">
+        <option value="basic">Basic: m2 M2 m3 M3 P4 TT P5 m6 M6 m7 M7</option>
+        <option value="triads">Triad-centric: m3 M3 P5 m6 M6</option>
+        <option value="seconds">Seconds only: m2 M2</option>
+        <option value="sevenths">Sevenths only: m7 M7</option>
+      </select>
+      <div class="text-xs text-neutral-500">All intervals in semitones, equal temperament.</div>
+    </div>
+  </section>
+
+  <section class="grid gap-4 mb-4 md:grid-cols-3">
+    <div class="bg-neutral-900 rounded-xl p-4 space-y-2">
+      <div class="text-sm text-neutral-400">Root Range (MIDI)</div>
+      <div class="flex items-center gap-3">
+        <input id="rootMin" type="number" value="52" class="w-20 bg-neutral-800 rounded px-2 py-1">
+        <span class="text-neutral-500">to</span>
+        <input id="rootMax" type="number" value="64" class="w-20 bg-neutral-800 rounded px-2 py-1">
+      </div>
+      <div class="text-xs text-neutral-500">Keeps notes comfortable and avoids extreme registers.</div>
+    </div>
+
+    <div class="bg-neutral-900 rounded-xl p-4 space-y-2">
+      <div class="text-sm text-neutral-400">Round</div>
+      <div class="text-xl font-semibold"><span id="round">1</span></div>
+      <div class="flex gap-2">
+        <button id="newGame" class="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95">New Game</button>
+        <button id="replayAll" class="px-3 py-2 rounded-lg bg-sky-700 hover:bg-sky-600 active:scale-95">Replay All Tiles</button>
+      </div>
+    </div>
+
+    <div class="bg-neutral-900 rounded-xl p-4 space-y-2">
+      <div class="text-sm text-neutral-400">Score</div>
+      <div class="text-xl font-semibold"><span id="score">0</span></div>
+      <div class="text-xs text-neutral-500">+100 for correct match, −10 per wrong pair.</div>
+    </div>
+  </section>
+
+  <section class="mb-6">
+    <div id="grid" class="grid grid-cols-4 sm:grid-cols-6 gap-3"></div>
+  </section>
+
+  <footer class="text-neutral-500 text-xs">
+    Audio unlocks on first click/keypress. Works offline. No external assets.
+  </footer>
+</div>
+
+<script src="https://unpkg.com/tone/build/Tone.js"></script>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
