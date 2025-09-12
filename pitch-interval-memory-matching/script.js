@@ -28,7 +28,11 @@ const GRID_SIZES = {
     expert: [4,4]
 };
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const intervalSynth = new Tone.PolySynth(Tone.Synth).toDestination();
+const feedbackSynth = new Tone.Synth({
+    oscillator: { type: 'sine' },
+    envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.2 }
+}).toDestination();
 let timerInterval, startTime;
 
 function setBoardSize(cols, rows){
@@ -53,43 +57,37 @@ function randomRoot(){
 }
 
 function playInterval(root, semitones, mode){
-    const now = audioCtx.currentTime;
     const freq1 = midiToFreq(root);
     const freq2 = midiToFreq(root + semitones);
 
-    const osc1 = audioCtx.createOscillator();
-    osc1.frequency.value = freq1;
-    osc1.type = 'sine';
-    osc1.connect(audioCtx.destination);
-
-    const osc2 = audioCtx.createOscillator();
-    osc2.frequency.value = freq2;
-    osc2.type = 'sine';
-    osc2.connect(audioCtx.destination);
+    Tone.Transport.stop();
+    Tone.Transport.cancel();
 
     if(mode === 'harmonic'){
-        osc1.start(now); osc2.start(now);
-        osc1.stop(now+1); osc2.stop(now+1);
+        intervalSynth.triggerAttackRelease([freq1, freq2], 1);
     } else if(mode === 'melodic-asc'){
-        osc1.start(now); osc1.stop(now+0.5);
-        osc2.start(now+0.5); osc2.stop(now+1);
+        Tone.Transport.schedule(time => {
+            intervalSynth.triggerAttackRelease(freq1, 0.5, time);
+        }, 0);
+        Tone.Transport.schedule(time => {
+            intervalSynth.triggerAttackRelease(freq2, 0.5, time);
+        }, 0.5);
+        Tone.Transport.start();
+        Tone.Transport.stop('+1');
     } else { // melodic-desc
-        osc2.start(now); osc2.stop(now+0.5);
-        osc1.start(now+0.5); osc1.stop(now+1);
+        Tone.Transport.schedule(time => {
+            intervalSynth.triggerAttackRelease(freq2, 0.5, time);
+        }, 0);
+        Tone.Transport.schedule(time => {
+            intervalSynth.triggerAttackRelease(freq1, 0.5, time);
+        }, 0.5);
+        Tone.Transport.start();
+        Tone.Transport.stop('+1');
     }
 }
 
 function playFeedback(freq){
-    const now = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.frequency.value = freq;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0.3, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now+0.4);
-    osc.connect(gain).connect(audioCtx.destination);
-    osc.start(now);
-    osc.stop(now+0.4);
+    feedbackSynth.triggerAttackRelease(freq, 0.4);
 }
 
 function generateTiles(diff){
@@ -228,7 +226,10 @@ function initGame(){
     adjustBoard();
 }
 
-document.getElementById('start').addEventListener('click', initGame);
+document.getElementById('start').addEventListener('click', async () => {
+    await Tone.start();
+    initGame();
+});
 
 function adjustBoard(){
     const board = document.getElementById('game');
