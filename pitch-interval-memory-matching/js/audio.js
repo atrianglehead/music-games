@@ -31,7 +31,7 @@ export function playInterval(rootMidi, semis, mode) {
       synth.triggerAttackRelease(f1, 0.25, now + 0.3);
       break;
     default:
-      synth.triggerAttackRelease([f1, f2], 0.35, now);
+      synth.triggerAttackRelease([f1, f2], 0.6, now);
   }
 }
 
