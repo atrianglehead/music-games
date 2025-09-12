@@ -7,6 +7,7 @@ const modeSel = el('mode');
 const pairsInput = el('pairs');
 const pairsVal = el('pairsVal');
 const intervalSetSel = el('intervalSet');
+const difficultySel = el('difficulty');
 const rootMin = el('rootMin');
 const rootMax = el('rootMax');
 const newGameBtn = el('newGame');
@@ -55,7 +56,7 @@ function drawGrid() {
     front.innerHTML = "？";
     const back = document.createElement('div');
     back.className = "face back absolute inset-0 flex items-center justify-center rounded-xl bg-emerald-700/30 text-emerald-300 font-semibold select-none";
-    back.innerText = t.label;
+    back.innerText = (difficultySel.value === 'hard') ? '' : t.label;
     card.appendChild(front);
     card.appendChild(back);
 
@@ -137,6 +138,7 @@ export function newGame() {
 export function setupControls() {
   pairsInput.addEventListener('input', e => { pairsVal.textContent = e.target.value; });
   newGameBtn.addEventListener('click', () => { round = 1; roundEl.textContent = round; newGame(); });
+  difficultySel.addEventListener('change', () => drawGrid());
   replayAllBtn.addEventListener('click', async () => {
     await ensureAudio();
     let t = 0;

@@ -16,7 +16,7 @@
     <p class="text-neutral-400">Match pairs by <em>ear</em>. Click two tiles; if they’re the same interval, they stay revealed.</p>
   </header>
 
-  <section class="grid gap-4 mb-4 md:grid-cols-3">
+  <section class="grid gap-4 mb-4 md:grid-cols-4">
     <div class="bg-neutral-900 rounded-xl p-4 space-y-2">
       <div class="text-sm text-neutral-400">Playback</div>
       <select id="mode" class="w-full bg-neutral-800 rounded-lg px-3 py-2">
@@ -43,6 +43,14 @@
         <option value="chromatic2oct">All 12, extended to 2 octaves</option>
       </select>
       <div class="text-xs text-neutral-500">All intervals in semitones, equal temperament.</div>
+    </div>
+
+    <div class="bg-neutral-900 rounded-xl p-4 space-y-2">
+      <div class="text-sm text-neutral-400">Difficulty</div>
+      <select id="difficulty" class="w-full bg-neutral-800 rounded-lg px-3 py-2">
+        <option value="easy">Easy</option>
+        <option value="hard">Hard (no labels)</option>
+      </select>
     </div>
   </section>
 
