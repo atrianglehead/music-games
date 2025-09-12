@@ -1,9 +1,9 @@
 let audioArmed = false;
 const limiter = new Tone.Limiter(-1).toDestination();
-const reverb = new Tone.Reverb({ decay: 1.8, wet: 0.1 }).connect(limiter);
+const reverb = new Tone.Reverb({ decay: 1.8, wet: 0.3 }).connect(limiter);
 const synth = new Tone.PolySynth(Tone.Synth, {
   oscillator: { type: "triangle" },
-  envelope: { attack: 0.003, decay: 0.95, sustain: 0.5, release: 0.75 }
+  envelope: { attack: 0.003, decay: 1.45, sustain: 0.5, release: 0.75 }
 }).connect(reverb);
 
 export function midiToFreq(m) {
