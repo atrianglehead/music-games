@@ -1,10 +1,9 @@
 let audioArmed = false;
 const limiter = new Tone.Limiter(-1).toDestination();
 const reverb = new Tone.Reverb({ decay: 1.8, wet: 0.1 }).connect(limiter);
-const synth = new Tone.DuoSynth({
-  vibratoAmount: 0.005,
-  voice0: { oscillator: { type: "triangle" }, envelope: { attack: 0.003, decay: 0.15, sustain: 0, release: 0.08 }},
-  voice1: { oscillator: { type: "sine" }, envelope: { attack: 0.003, decay: 0.12, sustain: 0, release: 0.06 }}
+const synth = new Tone.PolySynth(Tone.Synth, {
+  oscillator: { type: "triangle" },
+  envelope: { attack: 0.003, decay: 0.15, sustain: 0, release: 0.08 }
 }).connect(reverb);
 
 export function midiToFreq(m) {
