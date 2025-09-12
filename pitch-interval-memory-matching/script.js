@@ -223,7 +223,7 @@ function initGame(){
         });
         if(timed) startTimer();
     }
-    requestAnimationFrame(adjustBoard);
+    adjustBoard();
 }
 
 document.getElementById('start').addEventListener('click', async () => {
